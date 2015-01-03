@@ -1,3 +1,11 @@
+#!/usr/bin/python
+
+"""
+Script for collecting all images in multiple sub directories and then create a symlink collection of these files in one location. 
+
+Symlinks will be limited to groups with no more than 1000 links. 
+"""
+
 import os
 import re
 import sys
@@ -40,3 +48,22 @@ def get_files(root, pattern=".*", tests=[isfile], **kwargs):
                 files.append(file)
 
     return files
+
+i = 1
+dir_counter = 1000
+dir_name = ""
+files = get_files(".")
+
+for file_ in files:
+    if (i % 1000 == 1):
+        dir_name = "/home/kirkhus/bigdisk/media/images/symbolic/" + str(dir_counter)
+        os.mkdir(dir_name)
+        dir_counter += 1000
+
+    if not dir_name:
+        print "No dir name"
+        sys.exit(-1)
+
+    os.symlink(file_, dir_name + "/%s_%s" % (i, os.path.basename(file_)))
+
+    i += 1
